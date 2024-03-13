@@ -70,18 +70,23 @@ void print_video(const char* filename, int pool_size, int strides){
         exit(-1);
     }
     Frame cur_frame;
-    for(int i=0;i<1000;i++)
-        cur_frame = decoder_get_frame();
-    if(cur_frame.height==0 && cur_frame.linesize==0 && cur_frame.width==0 && cur_frame.data==NULL){
-        printf("视频帧已全部获取！\n");
-        decoder_close();
-        return;
-    }
     Frame new_frame;
-    init_frame(&new_frame);
-    resize(cur_frame, &new_frame, pool_size, strides);
-    print_frame(new_frame);
-    destroy_frame(&new_frame);
+    int frame_num = get_total_frames();
+    while(1){
+        for(int i=0;i<10;i++)
+            cur_frame = decoder_get_frame();
+        if(cur_frame.height==0 && cur_frame.linesize==0 && cur_frame.width==0 && cur_frame.data==NULL){
+            printf("视频结束！\n");
+            decoder_close();
+            return;
+        }
+        init_frame(&new_frame);
+        resize(cur_frame, &new_frame, pool_size, strides);
+        print_frame(new_frame);
+        //sleep(1);
+        system("clear");
+        destroy_frame(&new_frame);
+    }
     decoder_close();
     return;
 }
@@ -95,7 +100,7 @@ int main(int argc, char* argv[])
     { 
         printf("开始解析参数：optind = %d\n", optind);
         switch (opt) 
-        {    
+        {   
                 case 'v':
                         printf("捕获到选项: -v\n");
                         printf("系统版本v1.1.0\n");   
@@ -108,9 +113,7 @@ int main(int argc, char* argv[])
     }
 
     print_video("../ref_video/bad_apple.mp4", 1, 1);
-    print_video("../ref_video/BadApple样例参考.mp4", 2, 2);
-    print_video("../ref_video/dragon.mp4", 1, 1);
-    print_video("../ref_video/无牙仔跳舞样例参考.mp4", 2, 2);
+ 
     return 0;
 }
 
