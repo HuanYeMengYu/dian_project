@@ -5,7 +5,7 @@ typedef struct _Frame{
     int width;
     int height;
     int linesize;
-    unsigned char** data;
+    unsigned char* data;
 } Frame;
 
 int decoder_init(const char *filename);
