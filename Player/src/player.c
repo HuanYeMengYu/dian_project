@@ -4,7 +4,7 @@
 #include <unistd.h>
 #include "../include/video_decoder.h"
 
-const char* asciiChar = "@$B%8&WM#*oahkbdpqwmZO0QLCJUYXzcvunxrjft/|()1{}[]?-_+~<>i!lI;:,^`'.` ";
+const char* asciiChar = " .^,:;Il!i><~+_-?][}{1)(|/tfjrxnuvczXYUJCLQ0OZmwqpdbkhao*#MW&8%B$@";
 
 // 调整视频帧的分辨率(RGB)
 void rgb_resize(Frame cur_frame, Frame* new_frame, int pool_size, int strides){
@@ -125,9 +125,9 @@ void print_video(const char* filename, int pool_size, int strides){
             return;
         }
         init_frame(&new_frame);
-        greyscale_resize(cur_frame, &new_frame, pool_size, strides);
-        print_greyscale_frame(new_frame);
-        //sleep(1);
+        rgb_resize(cur_frame, &new_frame, pool_size, strides);
+        print_rgb_frame(new_frame);
+        usleep(1000000/10);
         system("clear");
         destroy_frame(&new_frame);
     }
@@ -156,7 +156,7 @@ int main(int argc, char* argv[])
         }
     }
 
-    print_video("../ref_video/BadApple样例参考.mp4", 2, 2);
+    print_video("../ref_video/dragon.mp4", 1, 1);
  
     return 0;
 }
