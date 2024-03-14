@@ -83,13 +83,13 @@ void greyscale_resize(Frame cur_frame, Frame* new_frame, int pool_size, int stri
     // 创建调整分辨率后的新视频帧
     new_frame->width = (int)((cur_frame.width - pool_size)/strides) + 1;
     new_frame->height = (int)((cur_frame.height - pool_size)/strides) + 1;
-    new_frame->linesize = new_frame->width;
+    new_frame->linesize = new_frame->width * 2;
     new_frame->data = (unsigned char*)malloc(new_frame->linesize*new_frame->height*sizeof(char));
     // average pooling
     for(int y=0;y<new_frame->height;y++){
         for(int x=0;x<new_frame->width;x++){
             int old_index = (y*cur_frame.width + x)*strides*3;
-            int new_index = y*new_frame->width+x;
+            int new_index = (y*new_frame->width+x)*2;
             unsigned int sum_r = 0, sum_g = 0, sum_b = 0;
             for(int j=0;j<pool_size;j++){
                 for(int i=0;i<pool_size;i++){
@@ -125,8 +125,8 @@ void destroy_frame(Frame* new_frame){
 
 // 打印rgb视频帧(控制背景颜色，打印空字符)
 void print_rgb_frame(Frame cur_frame){
-    for (int y = 0; y < cur_frame.height; ++y) {
-        for (int x = 0; x < cur_frame.width; ++x) {
+    for (int y = 0; y < cur_frame.height; ++y) {    // 设置打印字符步长：y+=2
+        for (int x = 0; x < cur_frame.width; ++x) {     // 设置打印字符步长：x+=2
             int index = (y * cur_frame.width + x) * 3;
             unsigned char r = cur_frame.data[index];
             unsigned char g = cur_frame.data[index + 1];
@@ -138,15 +138,31 @@ void print_rgb_frame(Frame cur_frame){
     return;
 }
 
-// 打印灰度视频帧
-void print_greyscale_frame(Frame cur_frame){
-    for (int y = 0; y < cur_frame.height; ++y) {
+// 打印灰度视频帧(printf)
+void print_greyscale_frame(Frame cur_frame){    // 设置打印字符步长：y+=2
+    for (int y = 0; y < cur_frame.height; ++y) {    // 设置打印字符步长：x+=2
         for (int x = 0; x < cur_frame.width; ++x){
-            unsigned int ascii_index = (int)(cur_frame.data[y * cur_frame.width + x] / 256.0 * strlen(asciiChar));
+            unsigned int ascii_index = (int)(cur_frame.data[(y * cur_frame.width + x)*2] / 256.0 * strlen(asciiChar));
             printf("%c ", asciiChar[ascii_index]);
         }
         printf("\n");
     } 
+    return;
+}
+
+// 打印灰度视频帧(write)
+void write_greyscale_frame(Frame cur_frame){    // 设置打印字符步长：y+=2
+    for (int y = 0; y < cur_frame.height; ++y) {    // 设置打印字符步长：x+=2
+        for (int x = 0; x < cur_frame.width; ++x){
+            int ascii_index = (int)(cur_frame.data[(y * cur_frame.width + x)*2] / 256.0 *strlen(asciiChar));
+            cur_frame.data[(y * cur_frame.width + x)*2] = asciiChar[ascii_index];
+            if(x!=cur_frame.width-1)
+                cur_frame.data[(y * cur_frame.width + x)*2 + 1] = ' ';
+            else
+                cur_frame.data[(y+1) * cur_frame.width * 2 - 1] = '\n';
+        } 
+    } 
+    write(STDOUT_FILENO, cur_frame.data, cur_frame.width*cur_frame.height*2);
     return;
 }
 
@@ -164,7 +180,7 @@ void print_video(const char* filename, int pool_size, int strides){
     init_frame(&new_frame);
     int frame_num = get_total_frames();
     while(1){
-        for(int i=0;i<5;i++)
+        for(int i=0;i<5;i++)    // 设置打印视频帧步长
             cur_frame = decoder_get_frame();
         if(cur_frame.height==0 && cur_frame.linesize==0 && cur_frame.width==0 && cur_frame.data==NULL){
             printf("视频结束！\n");
@@ -173,8 +189,8 @@ void print_video(const char* filename, int pool_size, int strides){
         }
         init_frame(&new_frame);
         greyscale_resize(cur_frame, &new_frame, pool_size, strides);
-        print_greyscale_frame(new_frame);
-        usleep(1000000/10);
+        write_greyscale_frame(new_frame);
+        usleep(1000000/10);     // 设置帧率
         system("clear");
         destroy_frame(&new_frame);
     }
@@ -203,7 +219,7 @@ int main(int argc, char* argv[])
         }
     }
 
-    print_video("../ref_video/dragon.mp4", 2, 2);
+    print_video("../ref_video/bad_apple.mp4", 2, 2);
  
     return 0;
 }
