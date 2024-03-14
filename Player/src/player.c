@@ -9,8 +9,8 @@ const char* asciiChar = " .^,:;Il!i><~+_-?][}{1)(|/tfjrxnuvczXYUJCLQ0OZmwqpdbkha
 // 调整视频帧的分辨率(RGB)
 void rgb_resize(Frame cur_frame, Frame* new_frame, int pool_size, int strides){
     // 创建调整分辨率后的新视频帧
-    new_frame->width = (int)((cur_frame.width - pool_size)/(double)strides) + 1;
-    new_frame->height = (int)((cur_frame.height - pool_size)/(double)strides) + 1;
+    new_frame->width = (int)((cur_frame.width - pool_size)/strides) + 1;
+    new_frame->height = (int)((cur_frame.height - pool_size)/strides) + 1;
     new_frame->linesize = new_frame->width * 3;
     new_frame->data = (unsigned char*)malloc(new_frame->linesize*new_frame->height*sizeof(char));
     // average pooling
@@ -37,8 +37,8 @@ void rgb_resize(Frame cur_frame, Frame* new_frame, int pool_size, int strides){
 // 调整视频帧的分辨率(灰度图)
 void greyscale_resize(Frame cur_frame, Frame* new_frame, int pool_size, int strides){
     // 创建调整分辨率后的新视频帧
-    new_frame->width = (int)((cur_frame.width - pool_size)/(double)strides) + 1;
-    new_frame->height = (int)((cur_frame.height - pool_size)/(double)strides) + 1;
+    new_frame->width = (int)((cur_frame.width - pool_size)/strides) + 1;
+    new_frame->height = (int)((cur_frame.height - pool_size)/strides) + 1;
     new_frame->linesize = new_frame->width;
     new_frame->data = (unsigned char*)malloc(new_frame->linesize*new_frame->height*sizeof(char));
     // average pooling
@@ -85,10 +85,10 @@ void print_rgb_frame(Frame cur_frame){
     for (int y = 0; y < cur_frame.height; ++y) {
         for (int x = 0; x < cur_frame.width; ++x) {
             int index = (y * cur_frame.width + x) * 3;
-            unsigned int r = (int)(cur_frame.data[index]);
-            unsigned int g = (int)(cur_frame.data[index + 1]);
-            unsigned int b = (int)(cur_frame.data[index + 2]);
-            printf("\e[48;2;%u;%u;%um ", r, g, b); // 输出空格字符
+            unsigned char r = cur_frame.data[index];
+            unsigned char g = cur_frame.data[index + 1];
+            unsigned char b = cur_frame.data[index + 2];
+            printf("\e[48;2;%d;%d;%dm  ", r, g, b); // 输出空格字符
         }
         printf("\e[0m\n"); // 恢复默认背景色
     } 
@@ -99,7 +99,7 @@ void print_rgb_frame(Frame cur_frame){
 void print_greyscale_frame(Frame cur_frame){
     for (int y = 0; y < cur_frame.height; ++y) {
         for (int x = 0; x < cur_frame.width; ++x)
-            printf("%c", cur_frame.data[y*cur_frame.width+x]);
+            printf("%c ", cur_frame.data[y*cur_frame.width+x]);
         printf("\n");
     } 
     return;
@@ -115,6 +115,8 @@ void print_video(const char* filename, int pool_size, int strides){
     }
     Frame cur_frame;
     Frame new_frame;
+    init_frame(&cur_frame);
+    init_frame(&new_frame);
     int frame_num = get_total_frames();
     while(1){
         for(int i=0;i<5;i++)
@@ -156,7 +158,7 @@ int main(int argc, char* argv[])
         }
     }
 
-    print_video("../ref_video/dragon.mp4", 1, 1);
+    print_video("../ref_video/bad_apple.mp4", 1, 1);
  
     return 0;
 }
