@@ -4,7 +4,51 @@
 #include <unistd.h>
 #include "../include/video_decoder.h"
 
-const char* asciiChar = " .^,:;Il!i><~+_-?][}{1)(|/tfjrxnuvczXYUJCLQ0OZmwqpdbkhao*#MW&8%B$@";
+//  .^,:;Il!i><~+_-?][}{1)(|/tfjrxnuvczXYUJCLQ0OZmwqpdbkhao*#MW&8%B$@
+const char* asciiChar = " .',:;irsXA253hMHGS#9B&@";
+
+// 打印rgb视频帧的rgb平面到txt文件
+void rgbframe_to_txt(Frame cur_frame){
+    FILE *fp;
+    // 打开输出文件
+    fp = fopen("../test/rgbframe.txt", "w");
+    if (fp == NULL) {
+        printf("Error: Unable to open file for writing\n");
+        return;
+    }
+    // 将灰度值写入文件
+    for (int y = 0; y < cur_frame.height; y++) {
+        for (int x = 0; x < cur_frame.width; x++) {
+            unsigned int index = (y*cur_frame.width+x)*3;
+            fprintf(fp, "%d,%d,%d ", cur_frame.data[index], cur_frame.data[index+1], cur_frame.data[index+2]);
+        }
+        fprintf(fp, "\n"); // 换行
+    }
+    // 关闭文件
+    fclose(fp);
+    return;
+}
+
+// 打印灰度图视频帧的灰度值平面到txt文件
+void greyframe_to_txt(Frame cur_frame){
+    FILE *fp;
+    // 打开输出文件
+    fp = fopen("../test/greyframe.txt", "w");
+    if (fp == NULL) {
+        printf("Error: Unable to open file for writing\n");
+        return;
+    }
+    // 将灰度值写入文件
+    for (int y = 0; y < cur_frame.height; y++) {
+        for (int x = 0; x < cur_frame.width; x++) {
+            fprintf(fp, "%d ", cur_frame.data[y*cur_frame.width+x]);
+        }
+        fprintf(fp, "\n"); // 换行
+    }
+    // 关闭文件
+    fclose(fp);
+    return;
+}
 
 // 调整视频帧的分辨率(RGB)
 void rgb_resize(Frame cur_frame, Frame* new_frame, int pool_size, int strides){
@@ -54,12 +98,11 @@ void greyscale_resize(Frame cur_frame, Frame* new_frame, int pool_size, int stri
                     sum_b += cur_frame.data[old_index+2+(j*cur_frame.width+i)*3];
                 }
             } 
-            double aver_r = (double)sum_r/(pool_size*pool_size);
-            double aver_g = (double)sum_g/(pool_size*pool_size);
-            double aver_b = (double)sum_b/(pool_size*pool_size);
-            double grey_scale = aver_r * 0.299 + aver_g * 0.587 + aver_b * 0.114;
-            int ascii_index = (int)(grey_scale*strlen(asciiChar) / 255);
-            new_frame->data[new_index] = asciiChar[ascii_index];
+            unsigned int aver_r = (int)(sum_r/(pool_size*pool_size));
+            unsigned int aver_g = (int)(sum_g/(pool_size*pool_size));
+            unsigned int aver_b = (int)(sum_b/(pool_size*pool_size));
+            unsigned int grey_scale = (int)(aver_r * 0.299 + aver_g * 0.587 + aver_b * 0.114); 
+            new_frame->data[new_index] = (unsigned char)grey_scale;
         }
     }
     return;
@@ -98,8 +141,10 @@ void print_rgb_frame(Frame cur_frame){
 // 打印灰度视频帧
 void print_greyscale_frame(Frame cur_frame){
     for (int y = 0; y < cur_frame.height; ++y) {
-        for (int x = 0; x < cur_frame.width; ++x)
-            printf("%c ", cur_frame.data[y*cur_frame.width+x]);
+        for (int x = 0; x < cur_frame.width; ++x){
+            unsigned int ascii_index = (int)(cur_frame.data[y * cur_frame.width + x] / 256.0 * strlen(asciiChar));
+            printf("%c ", asciiChar[ascii_index]);
+        }
         printf("\n");
     } 
     return;
@@ -127,8 +172,8 @@ void print_video(const char* filename, int pool_size, int strides){
             return;
         }
         init_frame(&new_frame);
-        rgb_resize(cur_frame, &new_frame, pool_size, strides);
-        print_rgb_frame(new_frame);
+        greyscale_resize(cur_frame, &new_frame, pool_size, strides);
+        print_greyscale_frame(new_frame);
         usleep(1000000/10);
         system("clear");
         destroy_frame(&new_frame);
@@ -158,7 +203,7 @@ int main(int argc, char* argv[])
         }
     }
 
-    print_video("../ref_video/bad_apple.mp4", 1, 1);
+    print_video("../ref_video/dragon.mp4", 2, 2);
  
     return 0;
 }
