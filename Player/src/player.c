@@ -56,23 +56,23 @@ void rgb_resize(Frame cur_frame, Frame* new_frame, int pool_size, int strides){
     new_frame->width = (int)((cur_frame.width - pool_size)/strides) + 1;
     new_frame->height = (int)((cur_frame.height - pool_size)/strides) + 1;
     new_frame->linesize = new_frame->width * 3;
-    new_frame->data = (unsigned char*)malloc(new_frame->linesize*new_frame->height*sizeof(char));
+    new_frame->data = (unsigned char*)malloc(new_frame->width*new_frame->height*sizeof(char)*3);
     // average pooling
     for(int y=0;y<new_frame->height;y++){
         for(int x=0;x<new_frame->width;x++){
-            int old_index = (y*cur_frame.width + x)*strides*3;
+            int old_index = (y*cur_frame.linesize + x*3)*strides;
             int new_index = (y*new_frame->width+x)*3;
             unsigned int sum_r = 0, sum_g = 0, sum_b = 0;
             for(int j=0;j<pool_size;j++){
                 for(int i=0;i<pool_size;i++){
-                    sum_r += cur_frame.data[old_index+(j*cur_frame.width+i)*3];
-                    sum_g += cur_frame.data[old_index+1+(j*cur_frame.width+i)*3];
-                    sum_b += cur_frame.data[old_index+2+(j*cur_frame.width+i)*3];
+                    sum_r += cur_frame.data[old_index+j*cur_frame.linesize+i*3];
+                    sum_g += cur_frame.data[old_index+1+j*cur_frame.linesize+i*3];
+                    sum_b += cur_frame.data[old_index+2+j*cur_frame.linesize+i*3];
                 }
             } 
-            new_frame->data[new_index] = (int)(sum_r/(pool_size*pool_size));
-            new_frame->data[new_index+1] = (int)(sum_g/(pool_size*pool_size));
-            new_frame->data[new_index+2] = (int)(sum_b/(pool_size*pool_size));
+            new_frame->data[new_index] = (unsigned char)(sum_r/(pool_size*pool_size));
+            new_frame->data[new_index+1] = (unsigned char)(sum_g/(pool_size*pool_size));
+            new_frame->data[new_index+2] = (unsigned char)(sum_b/(pool_size*pool_size));
         }
     }
     return;
@@ -84,18 +84,18 @@ void greyscale_resize(Frame cur_frame, Frame* new_frame, int pool_size, int stri
     new_frame->width = (int)((cur_frame.width - pool_size)/strides) + 1;
     new_frame->height = (int)((cur_frame.height - pool_size)/strides) + 1;
     new_frame->linesize = new_frame->width * 2;
-    new_frame->data = (unsigned char*)malloc(new_frame->linesize*new_frame->height*sizeof(char));
+    new_frame->data = (unsigned char*)malloc(new_frame->width*new_frame->height*sizeof(char)*2);
     // average pooling
     for(int y=0;y<new_frame->height;y++){
         for(int x=0;x<new_frame->width;x++){
-            int old_index = (y*cur_frame.width + x)*strides*3;
+            int old_index = (y*cur_frame.linesize + x*3)*strides;
             int new_index = (y*new_frame->width+x)*2;
             unsigned int sum_r = 0, sum_g = 0, sum_b = 0;
             for(int j=0;j<pool_size;j++){
                 for(int i=0;i<pool_size;i++){
-                    sum_r += cur_frame.data[old_index+(j*cur_frame.width+i)*3];
-                    sum_g += cur_frame.data[old_index+1+(j*cur_frame.width+i)*3];
-                    sum_b += cur_frame.data[old_index+2+(j*cur_frame.width+i)*3];
+                    sum_r += cur_frame.data[old_index+j*cur_frame.linesize+i*3];
+                    sum_g += cur_frame.data[old_index+1+j*cur_frame.linesize+i*3];
+                    sum_b += cur_frame.data[old_index+2+j*cur_frame.linesize+i*3];
                 }
             } 
             unsigned int aver_r = (int)(sum_r/(pool_size*pool_size));
@@ -143,7 +143,7 @@ void print_greyscale_frame(Frame cur_frame){    // 设置打印字符步长：y+
     for (int y = 0; y < cur_frame.height; ++y) {    // 设置打印字符步长：x+=2
         for (int x = 0; x < cur_frame.width; ++x){
             unsigned int ascii_index = (int)(cur_frame.data[(y * cur_frame.width + x)*2] / 256.0 * strlen(asciiChar));
-            printf("%c ", asciiChar[ascii_index]);
+            printf("%c%c", asciiChar[ascii_index], asciiChar[ascii_index]);
         }
         printf("\n");
     } 
@@ -189,7 +189,7 @@ void print_video(const char* filename, int pool_size, int strides){
         }
         init_frame(&new_frame);
         greyscale_resize(cur_frame, &new_frame, pool_size, strides);
-        write_greyscale_frame(new_frame);
+        print_greyscale_frame(new_frame);
         usleep(1000000/10);     // 设置帧率
         system("clear");
         destroy_frame(&new_frame);
@@ -210,7 +210,7 @@ int main(int argc, char* argv[])
         {   
                 case 'v':
                         printf("捕获到选项: -v\n");
-                        printf("系统版本v1.1.0\n");   
+                        printf("系统版本v1.1.0\n");
                         break;
                 case 'h':
                         printf("捕获到选项: -h\n");
@@ -219,7 +219,7 @@ int main(int argc, char* argv[])
         }
     }
 
-    print_video("../ref_video/dragon.mp4", 8, 8);
+    print_video("../ref_video/dragon.mp4", 1, 1);
  
     return 0;
 }

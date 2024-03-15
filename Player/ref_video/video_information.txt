@@ -11,6 +11,7 @@ frame_width:852
 frame_height:480
 frame_linesize:2560
 fps:30
+width=852,linesize=2556,height=480
 
 BadApple样例参考：
 total_frames:1610
