@@ -1,10 +1,3 @@
-BadApple样例参考：
-total_frames:1610
-frame_width:2560
-frame_height:1440
-frame_linesize:7680
-fps:60
-
 bad_apple.mp4：
 total_frames:6574
 frame_width:512
@@ -18,6 +11,13 @@ frame_width:852
 frame_height:480
 frame_linesize:2560
 fps:30
+
+BadApple样例参考：
+total_frames:1610
+frame_width:2560
+frame_height:1440
+frame_linesize:7680
+fps:60
 
 无牙仔跳舞样例参考.mp4：
 total_frames:1584

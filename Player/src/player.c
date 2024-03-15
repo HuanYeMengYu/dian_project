@@ -219,7 +219,7 @@ int main(int argc, char* argv[])
         }
     }
 
-    print_video("../ref_video/bad_apple.mp4", 2, 2);
+    print_video("../ref_video/dragon.mp4", 8, 8);
  
     return 0;
 }
