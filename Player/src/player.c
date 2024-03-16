@@ -24,7 +24,7 @@ int main(int argc, char* argv[])
         }
     }
 
-    print_video("../ref_video/titan3.mp4", 1, 1);
+    print_video("../ref_video/bad_apple.mp4", 6, 6);
  
     return 0;
 }
