@@ -1,6 +1,9 @@
 #include "../include/video_decoder.h"
 #include <stdio.h>
 
+//  .^,:;Il!i><~+_-?][}{1)(|/tfjrxnuvczXYUJCLQ0OZmwqpdbkhao*#MW&8%B$@
+const char* asciiChar = " .',:;irsXA253hMHGS#9B&@";
+
 // 打印rgb视频帧(控制背景颜色，打印空字符)
 void write_rgbframe(Frame cur_frame){
     char* ansi_rgb = (char*)malloc((cur_frame.width*20+5)*cur_frame.height*sizeof(char));

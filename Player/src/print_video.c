@@ -2,7 +2,7 @@
 #include <unistd.h>
 
 // 打印视频
-void print_video(const char* filename, int pool_size, int strides){
+void print_video(const char* filename, int pool_size, int strides, bool color){
     // 打开视频文件
     int status = decoder_init(filename);
     if(status == -1){
@@ -16,9 +16,10 @@ void print_video(const char* filename, int pool_size, int strides){
     
     bool pause = false;
     double fps = 34.0;  // 灰度图34.0
+    int frame_strides = color? 5 : 1;
     while(1){  
         if(!pause){
-            for(int i=0;i<1;i++)    // 设置打印视频帧步长
+            for(int i=0;i<frame_strides;i++)    // 设置打印视频帧步长
                 cur_frame = decoder_get_frame();
             if(cur_frame.height==0 && cur_frame.linesize==0 && cur_frame.width==0 && cur_frame.data==NULL){
                 printf("视频结束！\n");
@@ -28,13 +29,20 @@ void print_video(const char* filename, int pool_size, int strides){
             init_frame(&new_frame);
 
             //rgb_resize_space(cur_frame, &new_frame, pool_size, strides);
-            rgb_resize_strides(cur_frame, &new_frame, pool_size, strides);
+            //rgb_resize_strides(cur_frame, &new_frame, pool_size, strides);
             //grey_resize_space(cur_frame, &new_frame, pool_size, strides);
             //grey_resize_strides(cur_frame, &new_frame, pool_size, strides);
-            write_rgbframe(new_frame);
-            //write_greyframe(new_frame); 
-
-            usleep(1000000/fps);     // 设置帧率
+            //write_rgbframe(new_frame);
+            //write_greyframe(new_frame);
+            if(color){
+                rgb_resize_strides(cur_frame, &new_frame, pool_size, strides);
+                write_rgbframe(new_frame);
+                usleep(1000000/fps*5);     // 设置帧率
+            }else{
+                grey_resize_strides(cur_frame, &new_frame, pool_size, strides);
+                write_greyframe(new_frame);
+                usleep(1000000/fps);     // 设置帧率
+            }
             destroy_frame(&new_frame);
         }
        

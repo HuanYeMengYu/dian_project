@@ -5,6 +5,7 @@
 #include <stdbool.h>
 #include <stdlib.h>
 #include <string.h>
+#include <getopt.h>
 #include <unistd.h>
 #include <termios.h>
 #include <fcntl.h>
@@ -35,7 +36,8 @@ void init_frame(Frame* new_frame);// 初始化新视频帧
 void destroy_frame(Frame* new_frame);// 销毁调整分辨率后的新视频帧
 void write_rgbframe(Frame cur_frame);// 打印rgb视频帧(控制背景颜色，打印空白字符)
 void write_greyframe(Frame cur_frame);// 打印灰度视频帧(write)
-void print_video(const char* filename, int pool_size, int strides);// 打印视频
+void print_video(const char* filename, int pool_size, int strides, bool color);// 打印视频
 int getch(void);
+void print_help(void);
 
 #endif // !__VIDEO_DECODER_HEADER__

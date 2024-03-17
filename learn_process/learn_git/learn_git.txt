@@ -1,10 +1,22 @@
-1.本地仓库初始化为git仓库：git init
-2.本地生成ssh公私钥：ssh-keygen -t rsa；私钥：~/.ssh.id_rsa 公钥：~/.ssh/id_rsa.pub
+本地仓库初始化为git仓库：git init
+
+本地生成ssh公私钥：ssh-keygen -t rsa；私钥：~/.ssh.id_rsa 公钥：~/.ssh/id_rsa.pub
 远程仓库（github）添加本地公钥
-3.给本地git仓库添加远程仓库：git remote add origin url，origin为默认远程仓库
-4.查看远程仓库：git remote get-url origin
-5.工作区加载到缓存区：git add （.）
-6.查看本地分支：git branch
-7.切换本地分支：git checkout branch_name(master)
-8.缓存区提交到本地分支：git commit -m "message"
-9.本地分支推送到远程仓库：git -u origin my_branch，-u表示绑定远程仓库，下次push不需要写远程仓库名
+
+给本地git仓库添加远程仓库：git remote add origin url，origin为默认远程仓库
+
+查看远程仓库：git remote get-url origin
+
+工作区加载到缓存区：git add （.）
+
+查看本地分支：git branch
+
+切换本地分支：git checkout branch_name(master)
+
+缓存区提交到本地分支：git commit -m "message"
+
+本地分支推送到远程仓库：git -u origin my_branch，-u表示绑定远程仓库，下次push不需要写远程仓库名
+
+查看提交记录：git log
+
+本地分支回退到指定版本：git reset commit号

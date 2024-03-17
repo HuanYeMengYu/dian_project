@@ -15,5 +15,8 @@ A：unsigned char / 256(int)得到的结果是整数，小数部分舍弃，所�
 Q：dragon.mp4视频帧倾斜、rgb无颜色问题
 A：我把frame的linesize默认成width的3倍了
 
-Q：开启非阻塞读取键盘事件的设置后，rgb的图打印出现问题，推测与write（STDOUT）有关
-A：
+Q：如何非阻塞读取键盘事件
+A：(1)把STDIN_FILENO设置为非阻塞模式;(2)设置终端模式，键盘命令不需要按回车
+
+Q：开启非阻塞读取键盘事件的设置后，rgb的图打印出现问题
+A：在完成一次读取缓冲区后，要把STDIN_FILENO的模式改回阻塞模式
