@@ -1,5 +1,5 @@
 #include "../include/video_decoder.h"
-#include <stdlib.h>
+#include <unistd.h>
 
 // 打印视频
 void print_video(const char* filename, int pool_size, int strides){
@@ -15,66 +15,55 @@ void print_video(const char* filename, int pool_size, int strides){
     init_frame(&new_frame);
     
     bool pause = false;
-    double fps = 34.0;
-
-    // 将标准输入设置为非规范模式，以禁用行缓冲
-    struct termios term;
-    tcgetattr(STDIN_FILENO, &term);
-    term.c_lflag &= ~(ICANON | ECHO);  // 禁用规范模式和回显
-    tcsetattr(STDIN_FILENO, TCSANOW, &term);
-    
-    // 将标准输入设置为非阻塞模式
-    int flags = fcntl(STDIN_FILENO, F_GETFL, 0);
-    fcntl(STDIN_FILENO, F_SETFL, flags | O_NONBLOCK);
-   
+    double fps = 34.0;  // 灰度图34.0
     while(1){  
         if(!pause){
             for(int i=0;i<1;i++)    // 设置打印视频帧步长
                 cur_frame = decoder_get_frame();
             if(cur_frame.height==0 && cur_frame.linesize==0 && cur_frame.width==0 && cur_frame.data==NULL){
                 printf("视频结束！\n");
-                // 恢复标准输入的设置
-                term.c_lflag |= (ICANON | ECHO);
-                tcsetattr(STDIN_FILENO, TCSANOW, &term);
                 decoder_close();
                 return;
             }
             init_frame(&new_frame);
 
             //rgb_resize_space(cur_frame, &new_frame, pool_size, strides);
-            //rgb_resize_strides(cur_frame, &new_frame, pool_size, strides);
+            rgb_resize_strides(cur_frame, &new_frame, pool_size, strides);
             //grey_resize_space(cur_frame, &new_frame, pool_size, strides);
-            grey_resize_strides(cur_frame, &new_frame, pool_size, strides);
-            //write_rgbframe(new_frame);
-            write_greyframe(new_frame); 
+            //grey_resize_strides(cur_frame, &new_frame, pool_size, strides);
+            write_rgbframe(new_frame);
+            //write_greyframe(new_frame); 
 
-            usleep(1000000/fps);     // 设置帧率 
+            usleep(1000000/fps);     // 设置帧率
             destroy_frame(&new_frame);
         }
-        
-        int key = getchar();
+       
+        // 将标准输入设置为非阻塞模式(stdin缓冲区没有字符时getchar()函数不会阻塞程序)
+        int flags = fcntl(STDIN_FILENO, F_GETFL, 0);
+        fcntl(STDIN_FILENO, F_SETFL, flags | O_NONBLOCK);
+        int key = 0; 
+        key=getch();
+
         switch (key) {
-            case 32:    // space：暂停/播放
+            case ' ':    // space：暂停/播放
                 pause = pause ^ 1;
                 break;
-            case 100:   // d：播放速度翻倍
+            case 'd':   // d：播放速度翻倍
                 fps *= 2;
                 break;
-            case 113:   // q：退出播放
+            case 'q':   // q：退出播放
                 decoder_close();
                 return;
-                break;
-            default:
                 break;
         }
         
         if(!pause)
             system("clear");
+        
+        // 恢复stdin的阻塞模式
+        fcntl(STDIN_FILENO, F_SETFL, flags);
     }
     decoder_close();
-    // 恢复标准输入的设置
-    term.c_lflag |= (ICANON | ECHO);
-    tcsetattr(STDIN_FILENO, TCSANOW, &term);
     return;
 }
 

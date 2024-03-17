@@ -1,4 +1,5 @@
 #include "../include/video_decoder.h"
+#include <stdio.h>
 
 // 打印rgb视频帧(控制背景颜色，打印空字符)
 void write_rgbframe(Frame cur_frame){
@@ -36,6 +37,7 @@ void write_rgbframe(Frame cur_frame){
         ansi_rgb[(y+1)*(cur_frame.width*20+5)-1] = '\n';
     } 
     write(STDOUT_FILENO, ansi_rgb, cur_frame.height*(cur_frame.width*20+5));
+    //fwrite(ansi_rgb, sizeof(unsigned char), cur_frame.height*(cur_frame.width*20+5), stdout);
     return;
 }
 
@@ -48,6 +50,7 @@ void write_greyframe(Frame cur_frame){    // 设置打印字符步长：y+=2
         } 
     } 
     write(STDOUT_FILENO, cur_frame.data, cur_frame.linesize*cur_frame.height);
+    //fwrite(cur_frame.data, sizeof(unsigned char), cur_frame.linesize*cur_frame.height, stdout);
     return;
 }
 
