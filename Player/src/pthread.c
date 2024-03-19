@@ -10,7 +10,7 @@ void* process(void* arg){
     }
     Frame cur_frame;
     init_frame(&cur_frame);
-    int frame_strides = color? 5 : 1;
+    int frame_strides = color? 10 : 1;
     while(1){
         if(!playing){
             printf("视频结束！\n");
@@ -44,7 +44,7 @@ void* print(void *arg){
         if(!isEmpty(&Buffer)&&!pause){
             if(color){
                 write_rgbframe(*(Buffer.buffer[Buffer.front]));
-                usleep(1000000/fps*5);     // 设置帧率
+                usleep(1000000/fps*10);     // 设置帧率
                 dequeue(&Buffer);
             }else{
                 write_greyframe(*(Buffer.buffer[Buffer.front]));

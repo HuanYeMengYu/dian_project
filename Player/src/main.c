@@ -8,7 +8,7 @@ CircularQueue Buffer;
 
 int pool_size = 1;
 int strides = 1;
-double fps = 34.0;
+double fps = 31.5;
 bool color = false;
 bool version=false;
 bool help=false;

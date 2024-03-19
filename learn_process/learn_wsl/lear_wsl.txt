@@ -1,1 +1,0 @@
-1.wsl2与windwos互传文件：/mnt 目录是用于访问 Windows 文件系统的挂载点。WSL 允许你在 Windows 和 Linux 之间共享文件，/mnt 目录下的子目录分别代表了 Windows 的不同驱动器。例如，/mnt/c 表示 Windows 的 C:\ 驱动器，/mnt/d 表示 D:\ 驱动器，以此类推。通过这些挂载点，你可以在 WSL 中访问和操作 Windows 文件系统中的文件和文件夹。
