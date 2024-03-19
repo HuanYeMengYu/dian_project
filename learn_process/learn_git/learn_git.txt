@@ -1,21 +1,42 @@
-本地仓库初始化为git仓库：git init
+设置全局用户名：git config --global user.name "Your Name"
+
+设置全局用户邮箱：git config --global user.email "your_email@example.com"
 
 本地生成ssh公私钥：ssh-keygen -t rsa；私钥：~/.ssh.id_rsa 公钥：~/.ssh/id_rsa.pub
 远程仓库（github）添加本地公钥
+
+本地仓库初始化为git仓库：git init
+
+克隆远程仓库到本地：git clone "repository-url"
 
 给本地git仓库添加远程仓库：git remote add origin url，origin为默认远程仓库
 
 查看远程仓库：git remote get-url origin
 
+查看工作区、暂存区、本地分支的状态：git status
+
 工作区加载到缓存区：git add （.）
 
 查看本地分支：git branch
 
+创建新的本地分支：git branch "branch_name"
+
+删除本地分支：git branch -d "branch_name"
+
 切换本地分支：git checkout branch_name(master)
+
+合并指定本地分支到当前所在本地分支：git merge "branch_name"
 
 缓存区提交到本地分支：git commit -m "message"
 
 本地分支推送到远程仓库：git -u origin my_branch，-u表示绑定远程仓库，下次push不需要写远程仓库名
+
+将远程主机的最新内容拉到本地(注意还没有合并到本地分支)：git fetch "remote" "remote_branch"
+查看最新内容的更改：git log -p FETCH_HEAD
+继续使用git merge FETCH_HEAD把更新合并到当前所在本地分支
+
+从远程仓库拉取并合并更改：git pull "remote_name" "remote_branch:local_branch"
+git pull相当于git fetch + git merge
 
 查看提交记录：git log
 

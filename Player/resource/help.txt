@@ -1,0 +1,13 @@
+Usage: ./player [options]
+Options:
+--version                Display program version.
+--help                   Display the help manual.
+--color                  Choose to play rgb-video or not.
+--resize                 Resize the video's resolution.
+--file                   Choose which video to play.
+--fps                    Resize the fps of the video.
+-v                       Display program version.
+-h                       Display the help manual.
+-c                       Choose to play rgb-video or not.
+-r                       Resize the video's resolution.
+-f                       Choose which video to play.

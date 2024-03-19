@@ -19,12 +19,13 @@ void print_video(const char* filename, int pool_size, int strides, bool color){
     int frame_strides = color? 5 : 1;
     while(1){  
         if(!pause){
-            for(int i=0;i<frame_strides;i++)    // 设置打印视频帧步长
+            for(int i=0;i<frame_strides;i++){    // 设置打印视频帧步长
                 cur_frame = decoder_get_frame();
-            if(cur_frame.height==0 && cur_frame.linesize==0 && cur_frame.width==0 && cur_frame.data==NULL){
-                printf("视频结束！\n");
-                decoder_close();
-                return;
+                if(cur_frame.height==0 && cur_frame.linesize==0 && cur_frame.width==0 && cur_frame.data==NULL){
+                    printf("视频结束！\n");
+                    decoder_close();
+                    return;
+                }
             }
             init_frame(&new_frame);
 
