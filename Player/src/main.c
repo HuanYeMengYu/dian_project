@@ -15,7 +15,7 @@ bool help=false;
 bool resize=false;
 bool playing = true;
 const char* filename = "../ref_video/bad_apple.mp4";
-const char* cur_version = "dian-player v1.0";
+const char* cur_version = "dian-player v1.28.0";
 const char* help_txt = "../resource/help.txt";
 
 static struct option long_options[] =
