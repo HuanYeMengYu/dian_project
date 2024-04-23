@@ -16,6 +16,7 @@
 克隆远程仓库到本地：git clone "repository-url"
 
 给本地git仓库添加远程仓库：git remote add origin url，origin为默认远程仓库
+(github已不再支持密码验证，现在只能用ssh地址)
 
 查看远程仓库：git remote get-url origin
 
@@ -35,7 +36,7 @@
 
 缓存区提交到本地分支：git commit -m "message"
 
-本地分支推送到远程仓库：git -u origin my_branch，-u表示绑定远程仓库，下次push不需要写远程仓库名
+本地分支推送到远程仓库：git push -u remote_name local_branch:remote_branch，-u表示绑定远程仓库，下次push不需要写远程仓库名
 
 将远程主机的最新内容拉到本地(注意还没有合并到本地分支)：git fetch "remote" "remote_branch"
 查看最新内容的更改：git log -p FETCH_HEAD

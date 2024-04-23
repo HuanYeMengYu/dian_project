@@ -53,7 +53,7 @@ void write_greyframe(Frame cur_frame){    // 设置打印字符步长：y+=2
         } 
     } 
     write(STDOUT_FILENO, cur_frame.data, cur_frame.linesize*cur_frame.height);
-    //fwrite(cur_frame.data, sizeof(unsigned char), cur_frame.linesize*cur_frame.height, stdout);
+    //fwrite(cur_frame.data, sizeof(unsigned char)prefixed, cur_frame.linesize*cur_frame.height, stdout);
     return;
 }
 
